@@ -1,0 +1,14 @@
+run {
+    ls [la] {
+        time
+        print
+    }
+    ps {
+        time
+        print
+    }
+    grep <- ls{
+        foo
+
+    }
+}
