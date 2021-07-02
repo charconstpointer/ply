@@ -1,3 +1,15 @@
-id,col1,col2,col3
-1,foo,foo2,foo3
-2,bar,bar2,bar3
+func main() {
+    foo()
+}
+
+func foo(a){
+    main(a)
+}
+
+func das() {
+    println(13)
+}
+
+func foo2(){
+    println()
+}

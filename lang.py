@@ -1,13 +1,27 @@
-from functools import reduce
-
 import ply.lex as lex
 from ply import yacc
-import time
 
+f = open("inputs.foo", "r")
 tokens = (
-    'VAL',
-    'COMMA'
+    'IDENT',
+    'FUNC',
+    'OP',
+    'CP',
+    'OB',
+    'CB',
+    'COMMA',
+    'COMMENT',
+    'EOL'
 )
+
+t_ignore = r'[ t\]'
+t_OP = r'\('
+t_COMMENT = r'\#'
+t_OB = r'\{'
+t_CP = r'\)'
+t_EOL = r'\n'
+t_CB = r'\}'
+t_COMMA = r','
 
 
 def t_newline(t):
@@ -15,137 +29,91 @@ def t_newline(t):
     t.lexer.lineno += len(t.value)
 
 
-t_VAL = r'[a-zA-Z0-9"]+'
-t_COMMA = r','
-lexer = lex.lex()
-f = open("inputs.foo", "r")
+def t_IDENT(t):
+    r'[a-zA-Z0-9]+'
+    if t.value == 'func':
+        t.type = 'FUNC'
+    return t
 
+
+lexer = lex.lex()
+
+
+class F:
+    def __init__(self):
+        self.args = []
+
+
+funcs = {}
+calls = {}
 
 # lexer.input(f.read())
-
-# #
-# # # Tokenize
 # while True:
 #     tok = lexer.token()
 #     if not tok:
 #         break  # No more input
 #     print(tok)
-# cmds = []
-# results = {}
-#
-#
-# def execute(target, *args):
-#     for arg in args:
-#         print(arg)
-#     start_time = time.time()
-#     import subprocess
-#     output = subprocess.check_output(target, shell=True)
-#     results[target] = output
-#     # print("--- %s seconds ---" % (time.time() - start_time))
-#
-#
-# def p_program_e(p):
-#     """program : RUN OP exprs CP"""
-#     print(p[1], p[2], p[3], p[4])
-#
-#
-# def p_exprs(p):
-#     'exprs : expr expr'
-#
-#
-# def p_expr_single(p):
-#     'expr : IDENT'
-#     print("run -> ", p[1])
-#     cmds.append(p[1])
-#
-#
-# def p_expr_multi(p):
-#     'expr : IDENT OP args CP'
-#     cmds.append(p[1])
-#
-#
-# def p_expr_many(p):
-#     'expr : IDENT expr'
-#     cmds.append(p[1])
-#
-#
-# def p_args_single(p):
-#     'args : IDENT'
-#     # cmds.append(p[1])
-#     p[0] = p[1]
-#
-#
-# def p_args_multi(p):
-#     'args : IDENT args'
-#     # cmds.append(p[1])
-#     if p[2] is None:
-#         p[0] = p[1]
-#     else:
-#         p[0] = p[1], p[2]
-#     print(p[0])
-#
-#
-class Csv:
-    def __init__(self, columns):
-        self.columns = columns
+
+def p_program(p):
+    'program : func funcs'
+    print(p[1])
 
 
-class CsvBuilder:
-    def __init__(self):
-        self.columns = {}
-        self.order = {}
-
-    def insert_cols(self, cols):
-        columns = str.split(cols, " ")
-        for i, c in enumerate(columns):
-            print(i, c)
-            self.columns[c] = []
-            self.order[i] = c
-
-    def insert_rows(self, param):
-        for row in param:
-            values = str.split(row, " ")
-            for i, value in enumerate(values):
-                col = self.order[i]
-                self.columns[col].append(value)
-        print(self.columns)
-
-    def csv(self):
-        return Csv(self.columns)
+def p_funcs(p):
+    'funcs : func func'
 
 
-# csv_builder = CsvBuilder()
+def p_func(p):
+    'func : FUNC IDENT OP params CP OB body CB'
+    f_name = p[2]
+    fn = F()
+    fn.args = p[4]
+    funcs[f_name] = fn
+    # print(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8])
 
 
-def p_file(p):
-    'file : header rows'
-    print(p[1], p[2])
-    # csv_builder.insert_cols(p[1])
-    # csv_builder.insert_rows(p[2])
+def p_func_no_params(p):
+    'func : FUNC IDENT OP CP OB body CB'
+    f_name = p[2]
+    fn = F()
+    fn.args = []
+    funcs[f_name] = fn
+    # print(p[1], p[2], p[3], p[4], p[5], p[6], p[7])
 
 
-def p_header(p):
-    'header : row'
-    p[0] = p[1]
+def p_params_single(p):
+    'params : IDENT'
+    p[0] = ('params', p[1])
 
 
-def p_rows(p):
-    'rows : row row'
-    p[0] = p[1], p[2]
+def p_params_multi(p):
+    'params : IDENT params'
 
 
-def p_row_single_field(p):
-    'row : VAL'
-    p[0] = p[1]
+def p_body_invoke(p):
+    'body :  IDENT OP params CP '
+    p[0] = ('invoke', p[1], p[3])
+    f_name = p[1]
+    fn = F()
+    fn.args = p[3]
+    calls[f_name] = fn
+
+def p_body_empty(p):
+    'body : '
+    pass
 
 
-def p_row(p):
-    'row : VAL COMMA row'
-    p[0] = ('row', p[1], p[3])
+def p_body_invoke_no_params(p):
+    'body : IDENT OP CP'
+    p[0] = ('invoke', p[1])
 
 
 parser = yacc.yacc()
 parser.parse(f.read())
+for func in funcs:
+    print("declared ", func, "with args", funcs[func].args)
+for c in calls :
+    print("calling ", c, "with args", calls[c].args)
 # csv = csv_builder.csv()
 # print(csv.columns)
 #

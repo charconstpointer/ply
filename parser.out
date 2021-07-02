@@ -1,116 +1,260 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
+Unused terminals:
+
+    COMMA
+    COMMENT
+    EOL
+
 Grammar
 
-Rule 0     S' -> file
-Rule 1     file -> header rows
-Rule 2     header -> row
-Rule 3     rows -> row row
-Rule 4     row -> VAL
-Rule 5     row -> VAL COMMA row
+Rule 0     S' -> program
+Rule 1     program -> func funcs
+Rule 2     funcs -> func func
+Rule 3     func -> FUNC IDENT OP params CP OB body CB
+Rule 4     func -> FUNC IDENT OP CP OB body CB
+Rule 5     params -> IDENT
+Rule 6     params -> IDENT params
+Rule 7     body -> IDENT OP params CP
+Rule 8     body -> <empty>
+Rule 9     body -> IDENT OP CP
 
 Terminals, with rules where they appear
 
-COMMA                : 5
-VAL                  : 4 5
+CB                   : 3 4
+COMMA                : 
+COMMENT              : 
+CP                   : 3 4 7 9
+EOL                  : 
+FUNC                 : 3 4
+IDENT                : 3 4 5 6 7 9
+OB                   : 3 4
+OP                   : 3 4 7 9
 error                : 
 
 Nonterminals, with rules where they appear
 
-file                 : 0
-header               : 1
-row                  : 2 3 3 5
-rows                 : 1
+body                 : 3 4
+func                 : 1 2 2
+funcs                : 1
+params               : 3 6 7
+program              : 0
 
 Parsing method: LALR
 
 state 0
 
-    (0) S' -> . file
-    (1) file -> . header rows
-    (2) header -> . row
-    (4) row -> . VAL
-    (5) row -> . VAL COMMA row
+    (0) S' -> . program
+    (1) program -> . func funcs
+    (3) func -> . FUNC IDENT OP params CP OB body CB
+    (4) func -> . FUNC IDENT OP CP OB body CB
 
-    VAL             shift and go to state 4
+    FUNC            shift and go to state 3
 
-    file                           shift and go to state 1
-    header                         shift and go to state 2
-    row                            shift and go to state 3
+    program                        shift and go to state 1
+    func                           shift and go to state 2
 
 state 1
 
-    (0) S' -> file .
+    (0) S' -> program .
 
 
 
 state 2
 
-    (1) file -> header . rows
-    (3) rows -> . row row
-    (4) row -> . VAL
-    (5) row -> . VAL COMMA row
+    (1) program -> func . funcs
+    (2) funcs -> . func func
+    (3) func -> . FUNC IDENT OP params CP OB body CB
+    (4) func -> . FUNC IDENT OP CP OB body CB
 
-    VAL             shift and go to state 4
+    FUNC            shift and go to state 3
 
-    rows                           shift and go to state 5
-    row                            shift and go to state 6
+    func                           shift and go to state 4
+    funcs                          shift and go to state 5
 
 state 3
 
-    (2) header -> row .
+    (3) func -> FUNC . IDENT OP params CP OB body CB
+    (4) func -> FUNC . IDENT OP CP OB body CB
 
-    VAL             reduce using rule 2 (header -> row .)
+    IDENT           shift and go to state 6
 
 
 state 4
 
-    (4) row -> VAL .
-    (5) row -> VAL . COMMA row
+    (2) funcs -> func . func
+    (3) func -> . FUNC IDENT OP params CP OB body CB
+    (4) func -> . FUNC IDENT OP CP OB body CB
 
-    VAL             reduce using rule 4 (row -> VAL .)
-    $end            reduce using rule 4 (row -> VAL .)
-    COMMA           shift and go to state 7
+    FUNC            shift and go to state 3
 
+    func                           shift and go to state 7
 
 state 5
 
-    (1) file -> header rows .
+    (1) program -> func funcs .
 
-    $end            reduce using rule 1 (file -> header rows .)
+    $end            reduce using rule 1 (program -> func funcs .)
 
 
 state 6
 
-    (3) rows -> row . row
-    (4) row -> . VAL
-    (5) row -> . VAL COMMA row
+    (3) func -> FUNC IDENT . OP params CP OB body CB
+    (4) func -> FUNC IDENT . OP CP OB body CB
 
-    VAL             shift and go to state 4
+    OP              shift and go to state 8
 
-    row                            shift and go to state 8
 
 state 7
 
-    (5) row -> VAL COMMA . row
-    (4) row -> . VAL
-    (5) row -> . VAL COMMA row
+    (2) funcs -> func func .
 
-    VAL             shift and go to state 4
+    $end            reduce using rule 2 (funcs -> func func .)
 
-    row                            shift and go to state 9
 
 state 8
 
-    (3) rows -> row row .
+    (3) func -> FUNC IDENT OP . params CP OB body CB
+    (4) func -> FUNC IDENT OP . CP OB body CB
+    (5) params -> . IDENT
+    (6) params -> . IDENT params
 
-    $end            reduce using rule 3 (rows -> row row .)
+    CP              shift and go to state 11
+    IDENT           shift and go to state 9
 
+    params                         shift and go to state 10
 
 state 9
 
-    (5) row -> VAL COMMA row .
+    (5) params -> IDENT .
+    (6) params -> IDENT . params
+    (5) params -> . IDENT
+    (6) params -> . IDENT params
 
-    VAL             reduce using rule 5 (row -> VAL COMMA row .)
-    $end            reduce using rule 5 (row -> VAL COMMA row .)
+    CP              reduce using rule 5 (params -> IDENT .)
+    IDENT           shift and go to state 9
+
+    params                         shift and go to state 12
+
+state 10
+
+    (3) func -> FUNC IDENT OP params . CP OB body CB
+
+    CP              shift and go to state 13
+
+
+state 11
+
+    (4) func -> FUNC IDENT OP CP . OB body CB
+
+    OB              shift and go to state 14
+
+
+state 12
+
+    (6) params -> IDENT params .
+
+    CP              reduce using rule 6 (params -> IDENT params .)
+
+
+state 13
+
+    (3) func -> FUNC IDENT OP params CP . OB body CB
+
+    OB              shift and go to state 15
+
+
+state 14
+
+    (4) func -> FUNC IDENT OP CP OB . body CB
+    (7) body -> . IDENT OP params CP
+    (8) body -> .
+    (9) body -> . IDENT OP CP
+
+    IDENT           shift and go to state 16
+    CB              reduce using rule 8 (body -> .)
+
+    body                           shift and go to state 17
+
+state 15
+
+    (3) func -> FUNC IDENT OP params CP OB . body CB
+    (7) body -> . IDENT OP params CP
+    (8) body -> .
+    (9) body -> . IDENT OP CP
+
+    IDENT           shift and go to state 16
+    CB              reduce using rule 8 (body -> .)
+
+    body                           shift and go to state 18
+
+state 16
+
+    (7) body -> IDENT . OP params CP
+    (9) body -> IDENT . OP CP
+
+    OP              shift and go to state 19
+
+
+state 17
+
+    (4) func -> FUNC IDENT OP CP OB body . CB
+
+    CB              shift and go to state 20
+
+
+state 18
+
+    (3) func -> FUNC IDENT OP params CP OB body . CB
+
+    CB              shift and go to state 21
+
+
+state 19
+
+    (7) body -> IDENT OP . params CP
+    (9) body -> IDENT OP . CP
+    (5) params -> . IDENT
+    (6) params -> . IDENT params
+
+    CP              shift and go to state 23
+    IDENT           shift and go to state 9
+
+    params                         shift and go to state 22
+
+state 20
+
+    (4) func -> FUNC IDENT OP CP OB body CB .
+
+    FUNC            reduce using rule 4 (func -> FUNC IDENT OP CP OB body CB .)
+    $end            reduce using rule 4 (func -> FUNC IDENT OP CP OB body CB .)
+
+
+state 21
+
+    (3) func -> FUNC IDENT OP params CP OB body CB .
+
+    FUNC            reduce using rule 3 (func -> FUNC IDENT OP params CP OB body CB .)
+    $end            reduce using rule 3 (func -> FUNC IDENT OP params CP OB body CB .)
+
+
+state 22
+
+    (7) body -> IDENT OP params . CP
+
+    CP              shift and go to state 24
+
+
+state 23
+
+    (9) body -> IDENT OP CP .
+
+    CB              reduce using rule 9 (body -> IDENT OP CP .)
+
+
+state 24
+
+    (7) body -> IDENT OP params CP .
+
+    CB              reduce using rule 7 (body -> IDENT OP params CP .)
 
