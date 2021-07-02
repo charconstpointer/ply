@@ -1,175 +1,116 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
-Unused terminals:
-
-    END
-
 Grammar
 
-Rule 0     S' -> program
-Rule 1     program -> RUN OP exprs CP
-Rule 2     exprs -> expr expr
-Rule 3     expr -> IDENT
-Rule 4     expr -> IDENT OP args CP
-Rule 5     expr -> IDENT expr
-Rule 6     args -> IDENT
-Rule 7     args -> IDENT args
+Rule 0     S' -> file
+Rule 1     file -> header rows
+Rule 2     header -> row
+Rule 3     rows -> row row
+Rule 4     row -> VAL
+Rule 5     row -> VAL COMMA row
 
 Terminals, with rules where they appear
 
-CP                   : 1 4
-END                  : 
-IDENT                : 3 4 5 6 7
-OP                   : 1 4
-RUN                  : 1
+COMMA                : 5
+VAL                  : 4 5
 error                : 
 
 Nonterminals, with rules where they appear
 
-args                 : 4 7
-expr                 : 2 2 5
-exprs                : 1
-program              : 0
+file                 : 0
+header               : 1
+row                  : 2 3 3 5
+rows                 : 1
 
 Parsing method: LALR
 
 state 0
 
-    (0) S' -> . program
-    (1) program -> . RUN OP exprs CP
+    (0) S' -> . file
+    (1) file -> . header rows
+    (2) header -> . row
+    (4) row -> . VAL
+    (5) row -> . VAL COMMA row
 
-    RUN             shift and go to state 2
+    VAL             shift and go to state 4
 
-    program                        shift and go to state 1
+    file                           shift and go to state 1
+    header                         shift and go to state 2
+    row                            shift and go to state 3
 
 state 1
 
-    (0) S' -> program .
+    (0) S' -> file .
 
 
 
 state 2
 
-    (1) program -> RUN . OP exprs CP
+    (1) file -> header . rows
+    (3) rows -> . row row
+    (4) row -> . VAL
+    (5) row -> . VAL COMMA row
 
-    OP              shift and go to state 3
+    VAL             shift and go to state 4
 
+    rows                           shift and go to state 5
+    row                            shift and go to state 6
 
 state 3
 
-    (1) program -> RUN OP . exprs CP
-    (2) exprs -> . expr expr
-    (3) expr -> . IDENT
-    (4) expr -> . IDENT OP args CP
-    (5) expr -> . IDENT expr
+    (2) header -> row .
 
-    IDENT           shift and go to state 6
+    VAL             reduce using rule 2 (header -> row .)
 
-    exprs                          shift and go to state 4
-    expr                           shift and go to state 5
 
 state 4
 
-    (1) program -> RUN OP exprs . CP
+    (4) row -> VAL .
+    (5) row -> VAL . COMMA row
 
-    CP              shift and go to state 7
+    VAL             reduce using rule 4 (row -> VAL .)
+    $end            reduce using rule 4 (row -> VAL .)
+    COMMA           shift and go to state 7
 
 
 state 5
 
-    (2) exprs -> expr . expr
-    (3) expr -> . IDENT
-    (4) expr -> . IDENT OP args CP
-    (5) expr -> . IDENT expr
+    (1) file -> header rows .
 
-    IDENT           shift and go to state 6
+    $end            reduce using rule 1 (file -> header rows .)
 
-    expr                           shift and go to state 8
 
 state 6
 
-    (3) expr -> IDENT .
-    (4) expr -> IDENT . OP args CP
-    (5) expr -> IDENT . expr
-    (3) expr -> . IDENT
-    (4) expr -> . IDENT OP args CP
-    (5) expr -> . IDENT expr
+    (3) rows -> row . row
+    (4) row -> . VAL
+    (5) row -> . VAL COMMA row
 
-  ! shift/reduce conflict for IDENT resolved as shift
-    CP              reduce using rule 3 (expr -> IDENT .)
-    OP              shift and go to state 9
-    IDENT           shift and go to state 6
+    VAL             shift and go to state 4
 
-  ! IDENT           [ reduce using rule 3 (expr -> IDENT .) ]
-
-    expr                           shift and go to state 10
+    row                            shift and go to state 8
 
 state 7
 
-    (1) program -> RUN OP exprs CP .
+    (5) row -> VAL COMMA . row
+    (4) row -> . VAL
+    (5) row -> . VAL COMMA row
 
-    $end            reduce using rule 1 (program -> RUN OP exprs CP .)
+    VAL             shift and go to state 4
 
+    row                            shift and go to state 9
 
 state 8
 
-    (2) exprs -> expr expr .
+    (3) rows -> row row .
 
-    CP              reduce using rule 2 (exprs -> expr expr .)
+    $end            reduce using rule 3 (rows -> row row .)
 
 
 state 9
 
-    (4) expr -> IDENT OP . args CP
-    (6) args -> . IDENT
-    (7) args -> . IDENT args
+    (5) row -> VAL COMMA row .
 
-    IDENT           shift and go to state 11
+    VAL             reduce using rule 5 (row -> VAL COMMA row .)
+    $end            reduce using rule 5 (row -> VAL COMMA row .)
 
-    args                           shift and go to state 12
-
-state 10
-
-    (5) expr -> IDENT expr .
-
-    IDENT           reduce using rule 5 (expr -> IDENT expr .)
-    CP              reduce using rule 5 (expr -> IDENT expr .)
-
-
-state 11
-
-    (6) args -> IDENT .
-    (7) args -> IDENT . args
-    (6) args -> . IDENT
-    (7) args -> . IDENT args
-
-    CP              reduce using rule 6 (args -> IDENT .)
-    IDENT           shift and go to state 11
-
-    args                           shift and go to state 13
-
-state 12
-
-    (4) expr -> IDENT OP args . CP
-
-    CP              shift and go to state 14
-
-
-state 13
-
-    (7) args -> IDENT args .
-
-    CP              reduce using rule 7 (args -> IDENT args .)
-
-
-state 14
-
-    (4) expr -> IDENT OP args CP .
-
-    IDENT           reduce using rule 4 (expr -> IDENT OP args CP .)
-    CP              reduce using rule 4 (expr -> IDENT OP args CP .)
-
-WARNING: 
-WARNING: Conflicts:
-WARNING: 
-WARNING: shift/reduce conflict for IDENT in state 6 resolved as shift

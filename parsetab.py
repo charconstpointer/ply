@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'CP END IDENT OP RUNprogram : RUN OP exprs CPexprs : expr exprexpr : IDENTexpr : IDENT OP args CPexpr : IDENT exprargs : IDENTargs : IDENT args'
+_lr_signature = 'COMMA VALfile : header rowsheader : rowrows : row rowrow : VALrow : VAL COMMA row'
     
-_lr_action_items = {'RUN':([0,],[2,]),'$end':([1,7,],[0,-1,]),'OP':([2,6,],[3,9,]),'IDENT':([3,5,6,9,10,11,14,],[6,6,6,11,-5,11,-4,]),'CP':([4,6,8,10,11,12,13,14,],[7,-3,-2,-5,-6,14,-7,-4,]),}
+_lr_action_items = {'VAL':([0,2,3,4,6,7,9,],[4,4,-2,-4,4,4,-5,]),'$end':([1,4,5,8,9,],[0,-4,-1,-3,-5,]),'COMMA':([4,],[7,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'program':([0,],[1,]),'exprs':([3,],[4,]),'expr':([3,5,6,],[5,8,10,]),'args':([9,11,],[12,13,]),}
+_lr_goto_items = {'file':([0,],[1,]),'header':([0,],[2,]),'row':([0,2,6,7,],[3,6,8,9,]),'rows':([2,],[5,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,12 +26,10 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> program","S'",1,None,None,None),
-  ('program -> RUN OP exprs CP','program',4,'p_program_e','lang.py',64),
-  ('exprs -> expr expr','exprs',2,'p_exprs','lang.py',68),
-  ('expr -> IDENT','expr',1,'p_expr_single','lang.py',71),
-  ('expr -> IDENT OP args CP','expr',4,'p_expr_multi','lang.py',77),
-  ('expr -> IDENT expr','expr',2,'p_expr_many','lang.py',81),
-  ('args -> IDENT','args',1,'p_args_single','lang.py',86),
-  ('args -> IDENT args','args',2,'p_args_multi','lang.py',91),
+  ("S' -> file","S'",1,None,None,None),
+  ('file -> header rows','file',2,'p_file','lang.py',87),
+  ('header -> row','header',1,'p_header','lang.py',92),
+  ('rows -> row row','rows',2,'p_rows','lang.py',98),
+  ('row -> VAL','row',1,'p_row_single_field','lang.py',104),
+  ('row -> VAL COMMA row','row',3,'p_row','lang.py',109),
 ]
