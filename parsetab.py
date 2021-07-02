@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'CB COMMA COMMENT CP EOL FUNC IDENT OB OPprogram : func funcsfuncs : func funcfunc : FUNC IDENT OP params CP OB body CBfunc : FUNC IDENT OP CP OB body CBparams : IDENTparams : IDENT paramsbody :  IDENT OP params CP body : body : IDENT OP CP'
+_lr_signature = 'CB COMMA COMMENT CP EOL FUNC IDENT OB OPprogram : funcsfuncs : func funcsfuncs : func : FUNC IDENT OP params CP OB bodies CBbodies : bodyparams : IDENT paramsparams : IDENT COMMA paramsparams : body : IDENT OP CP bodiesbody : IDENT OP params CP bodiesbody : '
     
-_lr_action_items = {'FUNC':([0,2,4,20,21,],[3,3,3,-4,-3,]),'$end':([1,5,7,20,21,],[0,-1,-2,-4,-3,]),'IDENT':([3,8,9,14,15,19,],[6,9,9,16,16,9,]),'OP':([6,16,],[8,19,]),'CP':([8,9,10,12,19,22,],[11,-5,13,-6,23,24,]),'OB':([11,13,],[14,15,]),'CB':([14,15,17,18,23,24,],[-8,-8,20,21,-9,-7,]),}
+_lr_action_items = {'$end':([0,1,2,3,5,19,],[-3,0,-1,-3,-2,-4,]),'FUNC':([0,3,19,],[4,4,-4,]),'IDENT':([4,7,8,11,14,18,20,23,],[6,8,8,8,15,8,15,15,]),'OP':([6,15,],[7,18,]),'CP':([7,8,9,10,11,13,18,21,],[-8,-8,12,-6,-8,-7,20,23,]),'COMMA':([8,],[11,]),'OB':([12,],[14,]),'CB':([14,16,17,20,22,23,24,],[-11,19,-5,-11,-9,-11,-10,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'program':([0,],[1,]),'func':([0,2,4,],[2,4,7,]),'funcs':([2,],[5,]),'params':([8,9,19,],[10,12,22,]),'body':([14,15,],[17,18,]),}
+_lr_goto_items = {'program':([0,],[1,]),'funcs':([0,3,],[2,5,]),'func':([0,3,],[3,3,]),'params':([7,8,11,18,],[9,10,13,21,]),'bodies':([14,20,23,],[16,22,24,]),'body':([14,20,23,],[17,17,17,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,13 +27,15 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> func funcs','program',2,'p_program','lang.py',58),
-  ('funcs -> func func','funcs',2,'p_funcs','lang.py',63),
-  ('func -> FUNC IDENT OP params CP OB body CB','func',8,'p_func','lang.py',67),
-  ('func -> FUNC IDENT OP CP OB body CB','func',7,'p_func_no_params','lang.py',76),
-  ('params -> IDENT','params',1,'p_params_single','lang.py',85),
-  ('params -> IDENT params','params',2,'p_params_multi','lang.py',90),
-  ('body -> IDENT OP params CP','body',4,'p_body_invoke','lang.py',94),
-  ('body -> <empty>','body',0,'p_body_empty','lang.py',102),
-  ('body -> IDENT OP CP','body',3,'p_body_invoke_no_params','lang.py',107),
+  ('program -> funcs','program',1,'p_program','lang.py',77),
+  ('funcs -> func funcs','funcs',2,'p_funcs','lang.py',81),
+  ('funcs -> <empty>','funcs',0,'p_funcs_empty','lang.py',85),
+  ('func -> FUNC IDENT OP params CP OB bodies CB','func',8,'p_func','lang.py',89),
+  ('bodies -> body','bodies',1,'p_bodies','lang.py',98),
+  ('params -> IDENT params','params',2,'p_params','lang.py',101),
+  ('params -> IDENT COMMA params','params',3,'p_params_many','lang.py',105),
+  ('params -> <empty>','params',0,'p_params_empty','lang.py',108),
+  ('body -> IDENT OP CP bodies','body',4,'p_body_','lang.py',110),
+  ('body -> IDENT OP params CP bodies','body',5,'p_body_params','lang.py',114),
+  ('body -> <empty>','body',0,'p_body_empty','lang.py',121),
 ]

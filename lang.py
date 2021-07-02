@@ -1,5 +1,17 @@
 import ply.lex as lex
 from ply import yacc
+import collections
+
+
+def flatten(x):
+    result = []
+    for el in x:
+        if isinstance(x, collections.Iterable) and not isinstance(el, str):
+            result.extend(flatten(el))
+        else:
+            result.append(el)
+    return result
+
 
 f = open("inputs.foo", "r")
 tokens = (
@@ -14,7 +26,7 @@ tokens = (
     'EOL'
 )
 
-t_ignore = r'[ t\]'
+t_ignore = ' \t'
 t_OP = r'\('
 t_COMMENT = r'\#'
 t_OB = r'\{'
@@ -36,89 +48,104 @@ def t_IDENT(t):
     return t
 
 
+def t_error(t):
+    t.lexer.skip(1)
+
+
 lexer = lex.lex()
 
 
 class F:
-    def __init__(self):
-        self.args = []
+    def __init__(self, name, args):
+        self.args = args
+        self.name = name
 
 
 funcs = {}
-calls = {}
+calls = []
+params = []
 
-# lexer.input(f.read())
-# while True:
-#     tok = lexer.token()
-#     if not tok:
-#         break  # No more input
-#     print(tok)
 
 def p_program(p):
-    'program : func funcs'
-    print(p[1])
+    'program : funcs'
 
 
 def p_funcs(p):
-    'funcs : func func'
+    'funcs : func funcs'
+
+
+def p_funcs_empty(p):
+    'funcs : '
 
 
 def p_func(p):
-    'func : FUNC IDENT OP params CP OB body CB'
+    'func : FUNC IDENT OP params CP OB bodies CB'
+    # print("declaring func: ", p[2])
+    # print("\twith args: ", flatten(p[4]))
     f_name = p[2]
-    fn = F()
-    fn.args = p[4]
+    args = []
+    if p[4] is not None:
+        args = flatten(p[4])
+    fn = F(f_name, args)
     funcs[f_name] = fn
-    # print(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8])
 
 
-def p_func_no_params(p):
-    'func : FUNC IDENT OP CP OB body CB'
-    f_name = p[2]
-    fn = F()
-    fn.args = []
-    funcs[f_name] = fn
-    # print(p[1], p[2], p[3], p[4], p[5], p[6], p[7])
+def p_bodies(p):
+    'bodies : body'
 
 
-def p_params_single(p):
-    'params : IDENT'
-    p[0] = ('params', p[1])
-
-
-def p_params_multi(p):
+def p_params(p):
     'params : IDENT params'
+    p[0] = p[1]
+    params.append(p[1])
 
 
-def p_body_invoke(p):
-    'body :  IDENT OP params CP '
-    p[0] = ('invoke', p[1], p[3])
-    f_name = p[1]
-    fn = F()
-    fn.args = p[3]
-    calls[f_name] = fn
+def p_params_many(p):
+    'params : IDENT COMMA params'
+    p[0] = p[1], p[3]
+
+
+def p_params_empty(p):
+    'params : '
+
+
+def p_body_(p):
+    'body : IDENT OP CP bodies'
+    fn = p[1]
+    calls.append([fn, []])
+
+
+def p_body_params(p):
+    'body : IDENT OP params CP bodies'
+    fn = p[1]
+    args = flatten(p[3])
+    calls.append([fn, args])
+
 
 def p_body_empty(p):
     'body : '
-    pass
 
 
-def p_body_invoke_no_params(p):
-    'body : IDENT OP CP'
-    p[0] = ('invoke', p[1])
+def p_error(p):
+    # get formatted representation of stack
+    stack_state_str = ' '.join([symbol.type for symbol in parser.symstack][1:])
+
+    print('Syntax error in input! Parser State:{} {} . {}'
+          .format(parser.state,
+                  stack_state_str,
+                  p))
 
 
 parser = yacc.yacc()
 parser.parse(f.read())
-for func in funcs:
-    print("declared ", func, "with args", funcs[func].args)
-for c in calls :
-    print("calling ", c, "with args", calls[c].args)
-# csv = csv_builder.csv()
-# print(csv.columns)
-#
-# # while True:
-# # try:
-# #     # s = input('calc > ')   # Use raw_input on Python 2
-# # except EOFError:
-# #     break
+print(' '.join("*" * 25))
+for call in calls:
+    f_name = call[0]
+    with_args = call[1]
+    if f_name not in funcs:
+        print("function", f_name, "is not declared")
+        continue
+    fn = funcs[f_name]
+    if len(fn.args) != len(with_args):
+        word = "was" if len(fn.args) < 2 else "were"
+        print("function", f_name, "expects", len(fn.args), "arguments, instead", len(with_args), word, "provided")

@@ -1,15 +1,13 @@
-func main() {
-    foo()
+func main (a,b,c){
+    main(1,2,3)
+    main(1,2)
+    main()
+    main()
+    main(12,43)
+    main(1,2,3)
+    d()
 }
 
-func foo(a){
-    main(a)
-}
-
-func das() {
-    println(13)
-}
-
-func foo2(){
-    println()
+func d(){
+    main()
 }

@@ -2,42 +2,44 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
 Unused terminals:
 
-    COMMA
     COMMENT
     EOL
 
 Grammar
 
 Rule 0     S' -> program
-Rule 1     program -> func funcs
-Rule 2     funcs -> func func
-Rule 3     func -> FUNC IDENT OP params CP OB body CB
-Rule 4     func -> FUNC IDENT OP CP OB body CB
-Rule 5     params -> IDENT
+Rule 1     program -> funcs
+Rule 2     funcs -> func funcs
+Rule 3     funcs -> <empty>
+Rule 4     func -> FUNC IDENT OP params CP OB bodies CB
+Rule 5     bodies -> body
 Rule 6     params -> IDENT params
-Rule 7     body -> IDENT OP params CP
-Rule 8     body -> <empty>
-Rule 9     body -> IDENT OP CP
+Rule 7     params -> IDENT COMMA params
+Rule 8     params -> <empty>
+Rule 9     body -> IDENT OP CP bodies
+Rule 10    body -> IDENT OP params CP bodies
+Rule 11    body -> <empty>
 
 Terminals, with rules where they appear
 
-CB                   : 3 4
-COMMA                : 
+CB                   : 4
+COMMA                : 7
 COMMENT              : 
-CP                   : 3 4 7 9
+CP                   : 4 9 10
 EOL                  : 
-FUNC                 : 3 4
-IDENT                : 3 4 5 6 7 9
-OB                   : 3 4
-OP                   : 3 4 7 9
+FUNC                 : 4
+IDENT                : 4 6 7 9 10
+OB                   : 4
+OP                   : 4 9 10
 error                : 
 
 Nonterminals, with rules where they appear
 
-body                 : 3 4
-func                 : 1 2 2
-funcs                : 1
-params               : 3 6 7
+bodies               : 4 9 10
+body                 : 5
+func                 : 2
+funcs                : 1 2
+params               : 4 6 7 10
 program              : 0
 
 Parsing method: LALR
@@ -45,14 +47,17 @@ Parsing method: LALR
 state 0
 
     (0) S' -> . program
-    (1) program -> . func funcs
-    (3) func -> . FUNC IDENT OP params CP OB body CB
-    (4) func -> . FUNC IDENT OP CP OB body CB
+    (1) program -> . funcs
+    (2) funcs -> . func funcs
+    (3) funcs -> .
+    (4) func -> . FUNC IDENT OP params CP OB bodies CB
 
-    FUNC            shift and go to state 3
+    $end            reduce using rule 3 (funcs -> .)
+    FUNC            shift and go to state 4
 
     program                        shift and go to state 1
-    func                           shift and go to state 2
+    funcs                          shift and go to state 2
+    func                           shift and go to state 3
 
 state 1
 
@@ -62,199 +67,220 @@ state 1
 
 state 2
 
-    (1) program -> func . funcs
-    (2) funcs -> . func func
-    (3) func -> . FUNC IDENT OP params CP OB body CB
-    (4) func -> . FUNC IDENT OP CP OB body CB
+    (1) program -> funcs .
 
-    FUNC            shift and go to state 3
+    $end            reduce using rule 1 (program -> funcs .)
 
-    func                           shift and go to state 4
-    funcs                          shift and go to state 5
 
 state 3
 
-    (3) func -> FUNC . IDENT OP params CP OB body CB
-    (4) func -> FUNC . IDENT OP CP OB body CB
+    (2) funcs -> func . funcs
+    (2) funcs -> . func funcs
+    (3) funcs -> .
+    (4) func -> . FUNC IDENT OP params CP OB bodies CB
+
+    $end            reduce using rule 3 (funcs -> .)
+    FUNC            shift and go to state 4
+
+    func                           shift and go to state 3
+    funcs                          shift and go to state 5
+
+state 4
+
+    (4) func -> FUNC . IDENT OP params CP OB bodies CB
 
     IDENT           shift and go to state 6
 
 
-state 4
-
-    (2) funcs -> func . func
-    (3) func -> . FUNC IDENT OP params CP OB body CB
-    (4) func -> . FUNC IDENT OP CP OB body CB
-
-    FUNC            shift and go to state 3
-
-    func                           shift and go to state 7
-
 state 5
 
-    (1) program -> func funcs .
+    (2) funcs -> func funcs .
 
-    $end            reduce using rule 1 (program -> func funcs .)
+    $end            reduce using rule 2 (funcs -> func funcs .)
 
 
 state 6
 
-    (3) func -> FUNC IDENT . OP params CP OB body CB
-    (4) func -> FUNC IDENT . OP CP OB body CB
+    (4) func -> FUNC IDENT . OP params CP OB bodies CB
 
-    OP              shift and go to state 8
+    OP              shift and go to state 7
 
 
 state 7
 
-    (2) funcs -> func func .
+    (4) func -> FUNC IDENT OP . params CP OB bodies CB
+    (6) params -> . IDENT params
+    (7) params -> . IDENT COMMA params
+    (8) params -> .
 
-    $end            reduce using rule 2 (funcs -> func func .)
+    IDENT           shift and go to state 8
+    CP              reduce using rule 8 (params -> .)
 
+    params                         shift and go to state 9
 
 state 8
 
-    (3) func -> FUNC IDENT OP . params CP OB body CB
-    (4) func -> FUNC IDENT OP . CP OB body CB
-    (5) params -> . IDENT
+    (6) params -> IDENT . params
+    (7) params -> IDENT . COMMA params
     (6) params -> . IDENT params
+    (7) params -> . IDENT COMMA params
+    (8) params -> .
 
-    CP              shift and go to state 11
-    IDENT           shift and go to state 9
+    COMMA           shift and go to state 11
+    IDENT           shift and go to state 8
+    CP              reduce using rule 8 (params -> .)
 
     params                         shift and go to state 10
 
 state 9
 
-    (5) params -> IDENT .
-    (6) params -> IDENT . params
-    (5) params -> . IDENT
-    (6) params -> . IDENT params
+    (4) func -> FUNC IDENT OP params . CP OB bodies CB
 
-    CP              reduce using rule 5 (params -> IDENT .)
-    IDENT           shift and go to state 9
+    CP              shift and go to state 12
 
-    params                         shift and go to state 12
 
 state 10
-
-    (3) func -> FUNC IDENT OP params . CP OB body CB
-
-    CP              shift and go to state 13
-
-
-state 11
-
-    (4) func -> FUNC IDENT OP CP . OB body CB
-
-    OB              shift and go to state 14
-
-
-state 12
 
     (6) params -> IDENT params .
 
     CP              reduce using rule 6 (params -> IDENT params .)
 
 
+state 11
+
+    (7) params -> IDENT COMMA . params
+    (6) params -> . IDENT params
+    (7) params -> . IDENT COMMA params
+    (8) params -> .
+
+    IDENT           shift and go to state 8
+    CP              reduce using rule 8 (params -> .)
+
+    params                         shift and go to state 13
+
+state 12
+
+    (4) func -> FUNC IDENT OP params CP . OB bodies CB
+
+    OB              shift and go to state 14
+
+
 state 13
 
-    (3) func -> FUNC IDENT OP params CP . OB body CB
+    (7) params -> IDENT COMMA params .
 
-    OB              shift and go to state 15
+    CP              reduce using rule 7 (params -> IDENT COMMA params .)
 
 
 state 14
 
-    (4) func -> FUNC IDENT OP CP OB . body CB
-    (7) body -> . IDENT OP params CP
-    (8) body -> .
-    (9) body -> . IDENT OP CP
+    (4) func -> FUNC IDENT OP params CP OB . bodies CB
+    (5) bodies -> . body
+    (9) body -> . IDENT OP CP bodies
+    (10) body -> . IDENT OP params CP bodies
+    (11) body -> .
 
-    IDENT           shift and go to state 16
-    CB              reduce using rule 8 (body -> .)
+    IDENT           shift and go to state 15
+    CB              reduce using rule 11 (body -> .)
 
+    bodies                         shift and go to state 16
     body                           shift and go to state 17
 
 state 15
 
-    (3) func -> FUNC IDENT OP params CP OB . body CB
-    (7) body -> . IDENT OP params CP
-    (8) body -> .
-    (9) body -> . IDENT OP CP
+    (9) body -> IDENT . OP CP bodies
+    (10) body -> IDENT . OP params CP bodies
 
-    IDENT           shift and go to state 16
-    CB              reduce using rule 8 (body -> .)
+    OP              shift and go to state 18
 
-    body                           shift and go to state 18
 
 state 16
 
-    (7) body -> IDENT . OP params CP
-    (9) body -> IDENT . OP CP
+    (4) func -> FUNC IDENT OP params CP OB bodies . CB
 
-    OP              shift and go to state 19
+    CB              shift and go to state 19
 
 
 state 17
 
-    (4) func -> FUNC IDENT OP CP OB body . CB
+    (5) bodies -> body .
 
-    CB              shift and go to state 20
+    CB              reduce using rule 5 (bodies -> body .)
 
 
 state 18
 
-    (3) func -> FUNC IDENT OP params CP OB body . CB
+    (9) body -> IDENT OP . CP bodies
+    (10) body -> IDENT OP . params CP bodies
+    (6) params -> . IDENT params
+    (7) params -> . IDENT COMMA params
+    (8) params -> .
 
-    CB              shift and go to state 21
+  ! shift/reduce conflict for CP resolved as shift
+    CP              shift and go to state 20
+    IDENT           shift and go to state 8
 
+  ! CP              [ reduce using rule 8 (params -> .) ]
+
+    params                         shift and go to state 21
 
 state 19
 
-    (7) body -> IDENT OP . params CP
-    (9) body -> IDENT OP . CP
-    (5) params -> . IDENT
-    (6) params -> . IDENT params
+    (4) func -> FUNC IDENT OP params CP OB bodies CB .
 
-    CP              shift and go to state 23
-    IDENT           shift and go to state 9
+    FUNC            reduce using rule 4 (func -> FUNC IDENT OP params CP OB bodies CB .)
+    $end            reduce using rule 4 (func -> FUNC IDENT OP params CP OB bodies CB .)
 
-    params                         shift and go to state 22
 
 state 20
 
-    (4) func -> FUNC IDENT OP CP OB body CB .
+    (9) body -> IDENT OP CP . bodies
+    (5) bodies -> . body
+    (9) body -> . IDENT OP CP bodies
+    (10) body -> . IDENT OP params CP bodies
+    (11) body -> .
 
-    FUNC            reduce using rule 4 (func -> FUNC IDENT OP CP OB body CB .)
-    $end            reduce using rule 4 (func -> FUNC IDENT OP CP OB body CB .)
+    IDENT           shift and go to state 15
+    CB              reduce using rule 11 (body -> .)
 
+    bodies                         shift and go to state 22
+    body                           shift and go to state 17
 
 state 21
 
-    (3) func -> FUNC IDENT OP params CP OB body CB .
+    (10) body -> IDENT OP params . CP bodies
 
-    FUNC            reduce using rule 3 (func -> FUNC IDENT OP params CP OB body CB .)
-    $end            reduce using rule 3 (func -> FUNC IDENT OP params CP OB body CB .)
+    CP              shift and go to state 23
 
 
 state 22
 
-    (7) body -> IDENT OP params . CP
+    (9) body -> IDENT OP CP bodies .
 
-    CP              shift and go to state 24
+    CB              reduce using rule 9 (body -> IDENT OP CP bodies .)
 
 
 state 23
 
-    (9) body -> IDENT OP CP .
+    (10) body -> IDENT OP params CP . bodies
+    (5) bodies -> . body
+    (9) body -> . IDENT OP CP bodies
+    (10) body -> . IDENT OP params CP bodies
+    (11) body -> .
 
-    CB              reduce using rule 9 (body -> IDENT OP CP .)
+    IDENT           shift and go to state 15
+    CB              reduce using rule 11 (body -> .)
 
+    bodies                         shift and go to state 24
+    body                           shift and go to state 17
 
 state 24
 
-    (7) body -> IDENT OP params CP .
+    (10) body -> IDENT OP params CP bodies .
 
-    CB              reduce using rule 7 (body -> IDENT OP params CP .)
+    CB              reduce using rule 10 (body -> IDENT OP params CP bodies .)
 
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for CP in state 18 resolved as shift
