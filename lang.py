@@ -147,5 +147,5 @@ for call in calls:
         continue
     fn = funcs[f_name]
     if len(fn.args) != len(with_args):
-        word = "was" if len(fn.args) < 2 else "were"
+        word = "was" if len(with_args) == 1 else "were"
         print("function", f_name, "expects", len(fn.args), "arguments, instead", len(with_args), word, "provided")

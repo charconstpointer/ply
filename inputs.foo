@@ -6,8 +6,20 @@ func main (a,b,c){
     main(12,43)
     main(1,2,3)
     d()
+    a()
+    a(123,3,a)
+    foo()
+    foo(1)
 }
 
 func d(){
     main()
+}
+
+func a() {
+
+}
+
+func d(a) {
+
 }
