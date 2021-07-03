@@ -1,5 +1,6 @@
 func main (a,b,c){
-    main(1,2,3)
+    var xx = 13
+    main(1,2,xx,13)
     main(1,2)
     main()
     main()
@@ -7,19 +8,35 @@ func main (a,b,c){
     main(1,2,3)
     d()
     a()
+    a(2,2)
     a(123,3,a)
     foo()
+    if (dd) {
+        cost()
+        func dx() {
+
+        }
+        dx(2)
+    }
     foo(1)
+}
+
+func cost(a,b){
+
 }
 
 func d(){
     main()
 }
 
-func a() {
+func a(arg1,arg2) {
 
 }
 
 func d(a) {
+
+}
+
+if () {
 
 }

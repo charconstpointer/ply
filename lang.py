@@ -23,17 +23,21 @@ tokens = (
     'CB',
     'COMMA',
     'COMMENT',
-    'EOL'
+    'EOL',
+    'VAR',
+    'IF',
+    'ASSIGN'
 )
 
 t_ignore = ' \t'
 t_OP = r'\('
-t_COMMENT = r'\#'
+t_COMMENT = r'^(\/\/)'
 t_OB = r'\{'
 t_CP = r'\)'
 t_EOL = r'\n'
 t_CB = r'\}'
 t_COMMA = r','
+t_ASSIGN = r'='
 
 
 def t_newline(t):
@@ -45,6 +49,10 @@ def t_IDENT(t):
     r'[a-zA-Z0-9]+'
     if t.value == 'func':
         t.type = 'FUNC'
+    if t.value == 'var':
+        t.type = 'VAR'
+    if t.value == 'if':
+        t.type = 'IF'
     return t
 
 
@@ -67,21 +75,47 @@ params = []
 
 
 def p_program(p):
-    'program : funcs'
+    'program : stmts'
 
 
-def p_funcs(p):
-    'funcs : func funcs'
+def p_stmts(p):
+    'stmts : stmt stmts'
+
+
+def p_stmt_func(p):
+    'stmt : func'
+
+
+def p_stmt_decl(p):
+    'stmt : decl'
+
+
+def p_stmt_if(p):
+    'stmt : ifstmt'
+
+
+def p_ifstmt(p):
+    'ifstmt : IF OP predicate CP OB body CB'
+
+
+def p_predicate(p):
+    'predicate : IDENT'
+
+
+def p_predicate_empty(p):
+    'predicate : '
+
+
+def p_decl(p):
+    'decl : VAR IDENT ASSIGN IDENT'
 
 
 def p_funcs_empty(p):
-    'funcs : '
+    'stmts : '
 
 
 def p_func(p):
     'func : FUNC IDENT OP params CP OB bodies CB'
-    # print("declaring func: ", p[2])
-    # print("\twith args: ", flatten(p[4]))
     f_name = p[2]
     args = []
     if p[4] is not None:
@@ -109,10 +143,22 @@ def p_params_empty(p):
     'params : '
 
 
-def p_body_(p):
+def p_body(p):
     'body : IDENT OP CP bodies'
     fn = p[1]
     calls.append([fn, []])
+
+
+def p_body_decl(p):
+    'body : decl bodies'
+
+
+def p_body_if(p):
+    'body : ifstmt bodies'
+
+
+def p_body_func(p):
+    'body : func bodies'
 
 
 def p_body_params(p):
@@ -127,7 +173,6 @@ def p_body_empty(p):
 
 
 def p_error(p):
-    # get formatted representation of stack
     stack_state_str = ' '.join([symbol.type for symbol in parser.symstack][1:])
 
     print('Syntax error in input! Parser State:{} {} . {}'
