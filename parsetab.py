@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'CB COMMA COMMENT CP EOL FUNC IDENT OB OPprogram : funcsfuncs : func funcsfuncs : func : FUNC IDENT OP params CP OB bodies CBbodies : bodyparams : IDENT paramsparams : IDENT COMMA paramsparams : body : IDENT OP CP bodiesbody : IDENT OP params CP bodiesbody : '
+_lr_signature = 'ASSIGN CB COMMA COMMENT CP EOL FUNC IDENT IF OB OP VARprogram : stmtsstmts : stmt stmtsstmt : funcstmt : declstmt : ifstmtifstmt : IF OP predicate CP OB body CBpredicate : IDENTpredicate : decl : VAR IDENT ASSIGN IDENTstmts : func : FUNC IDENT OP params CP OB bodies CBbodies : bodyparams : IDENT paramsparams : IDENT COMMA paramsparams : body : IDENT OP CP bodiesbody : decl bodiesbody : ifstmt bodiesbody : func bodiesbody : IDENT OP params CP bodiesbody : '
     
-_lr_action_items = {'$end':([0,1,2,3,5,19,],[-3,0,-1,-3,-2,-4,]),'FUNC':([0,3,19,],[4,4,-4,]),'IDENT':([4,7,8,11,14,18,20,23,],[6,8,8,8,15,8,15,15,]),'OP':([6,15,],[7,18,]),'CP':([7,8,9,10,11,13,18,21,],[-8,-8,12,-6,-8,-7,20,23,]),'COMMA':([8,],[11,]),'OB':([12,],[14,]),'CB':([14,16,17,20,22,23,24,],[-11,19,-5,-11,-9,-11,-10,]),}
+_lr_action_items = {'$end':([0,1,2,3,4,5,6,10,20,35,40,],[-10,0,-1,-10,-3,-4,-5,-2,-9,-6,-11,]),'FUNC':([0,3,4,5,6,20,25,27,30,31,32,35,40,41,44,],[7,7,-3,-4,-5,-9,7,7,7,7,7,-6,-11,7,7,]),'VAR':([0,3,4,5,6,20,25,27,30,31,32,35,40,41,44,],[8,8,-3,-4,-5,-9,8,8,8,8,8,-6,-11,8,8,]),'IF':([0,3,4,5,6,20,25,27,30,31,32,35,40,41,44,],[9,9,-3,-4,-5,-9,9,9,9,9,9,-6,-11,9,9,]),'IDENT':([7,8,13,14,15,18,20,23,25,27,30,31,32,35,36,40,41,44,],[11,12,17,18,20,18,-9,18,29,29,29,29,29,-6,18,-11,29,29,]),'OP':([9,11,29,],[13,14,36,]),'ASSIGN':([12,],[15,]),'CP':([13,14,16,17,18,19,22,23,26,36,42,],[-8,-15,21,-7,-15,24,-13,-15,-14,41,44,]),'COMMA':([18,],[23,]),'CB':([20,25,27,28,30,31,32,33,34,35,37,38,39,40,41,43,44,45,],[-9,-21,-21,35,-21,-21,-21,40,-12,-6,-17,-18,-19,-11,-21,-16,-21,-20,]),'OB':([21,24,],[25,27,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'program':([0,],[1,]),'funcs':([0,3,],[2,5,]),'func':([0,3,],[3,3,]),'params':([7,8,11,18,],[9,10,13,21,]),'bodies':([14,20,23,],[16,22,24,]),'body':([14,20,23,],[17,17,17,]),}
+_lr_goto_items = {'program':([0,],[1,]),'stmts':([0,3,],[2,10,]),'stmt':([0,3,],[3,3,]),'func':([0,3,25,27,30,31,32,41,44,],[4,4,32,32,32,32,32,32,32,]),'decl':([0,3,25,27,30,31,32,41,44,],[5,5,30,30,30,30,30,30,30,]),'ifstmt':([0,3,25,27,30,31,32,41,44,],[6,6,31,31,31,31,31,31,31,]),'predicate':([13,],[16,]),'params':([14,18,23,36,],[19,22,26,42,]),'body':([25,27,30,31,32,41,44,],[28,34,34,34,34,34,34,]),'bodies':([27,30,31,32,41,44,],[33,37,38,39,43,45,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,15 +27,25 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> funcs','program',1,'p_program','lang.py',70),
-  ('funcs -> func funcs','funcs',2,'p_funcs','lang.py',74),
-  ('funcs -> <empty>','funcs',0,'p_funcs_empty','lang.py',78),
-  ('func -> FUNC IDENT OP params CP OB bodies CB','func',8,'p_func','lang.py',82),
-  ('bodies -> body','bodies',1,'p_bodies','lang.py',94),
-  ('params -> IDENT params','params',2,'p_params','lang.py',98),
-  ('params -> IDENT COMMA params','params',3,'p_params_many','lang.py',104),
-  ('params -> <empty>','params',0,'p_params_empty','lang.py',109),
-  ('body -> IDENT OP CP bodies','body',4,'p_body_','lang.py',113),
-  ('body -> IDENT OP params CP bodies','body',5,'p_body_params','lang.py',119),
-  ('body -> <empty>','body',0,'p_body_empty','lang.py',126),
+  ('program -> stmts','program',1,'p_program','lang.py',78),
+  ('stmts -> stmt stmts','stmts',2,'p_stmts','lang.py',82),
+  ('stmt -> func','stmt',1,'p_stmt_func','lang.py',86),
+  ('stmt -> decl','stmt',1,'p_stmt_decl','lang.py',90),
+  ('stmt -> ifstmt','stmt',1,'p_stmt_if','lang.py',94),
+  ('ifstmt -> IF OP predicate CP OB body CB','ifstmt',7,'p_ifstmt','lang.py',98),
+  ('predicate -> IDENT','predicate',1,'p_predicate','lang.py',102),
+  ('predicate -> <empty>','predicate',0,'p_predicate_empty','lang.py',106),
+  ('decl -> VAR IDENT ASSIGN IDENT','decl',4,'p_decl','lang.py',110),
+  ('stmts -> <empty>','stmts',0,'p_funcs_empty','lang.py',114),
+  ('func -> FUNC IDENT OP params CP OB bodies CB','func',8,'p_func','lang.py',118),
+  ('bodies -> body','bodies',1,'p_bodies','lang.py',128),
+  ('params -> IDENT params','params',2,'p_params','lang.py',132),
+  ('params -> IDENT COMMA params','params',3,'p_params_many','lang.py',138),
+  ('params -> <empty>','params',0,'p_params_empty','lang.py',143),
+  ('body -> IDENT OP CP bodies','body',4,'p_body','lang.py',147),
+  ('body -> decl bodies','body',2,'p_body_decl','lang.py',153),
+  ('body -> ifstmt bodies','body',2,'p_body_if','lang.py',157),
+  ('body -> func bodies','body',2,'p_body_func','lang.py',161),
+  ('body -> IDENT OP params CP bodies','body',5,'p_body_params','lang.py',165),
+  ('body -> <empty>','body',0,'p_body_empty','lang.py',172),
 ]

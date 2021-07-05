@@ -8,36 +8,600 @@ Unused terminals:
 Grammar
 
 Rule 0     S' -> program
-Rule 1     program -> funcs
-Rule 2     funcs -> func funcs
-Rule 3     funcs -> <empty>
-Rule 4     func -> FUNC IDENT OP params CP OB bodies CB
-Rule 5     bodies -> body
-Rule 6     params -> IDENT params
-Rule 7     params -> IDENT COMMA params
-Rule 8     params -> <empty>
-Rule 9     body -> IDENT OP CP bodies
-Rule 10    body -> IDENT OP params CP bodies
+Rule 1     program -> stmts
+Rule 2     stmts -> stmt stmts
+Rule 3     stmt -> func
+Rule 4     stmt -> decl
+Rule 5     stmt -> ifstmt
+Rule 6     ifstmt -> IF OP predicate CP OB body CB
+Rule 7     predicate -> IDENT
+Rule 8     predicate -> <empty>
+Rule 9     decl -> VAR IDENT ASSIGN IDENT
+Rule 10    stmts -> <empty>
+Rule 11    func -> FUNC IDENT OP params CP OB bodies CB
+Rule 12    bodies -> body
+Rule 13    params -> IDENT params
+Rule 14    params -> IDENT COMMA params
+Rule 15    params -> <empty>
+Rule 16    body -> IDENT OP CP bodies
+Rule 17    body -> decl bodies
+Rule 18    body -> ifstmt bodies
+Rule 19    body -> func bodies
+Rule 20    body -> IDENT OP params CP bodies
+Rule 21    body -> <empty>
 
 Terminals, with rules where they appear
 
-CB                   : 4
-COMMA                : 7
+ASSIGN               : 9
+CB                   : 6 11
+COMMA                : 14
 COMMENT              : 
-CP                   : 4 9 10
+CP                   : 6 11 16 20
 EOL                  : 
-FUNC                 : 4
-IDENT                : 4 6 7 9 10
-OB                   : 4
-OP                   : 4 9 10
+FUNC                 : 11
+IDENT                : 7 9 9 11 13 14 16 20
+IF                   : 6
+OB                   : 6 11
+OP                   : 6 11 16 20
+VAR                  : 9
 error                : 
 
 Nonterminals, with rules where they appear
 
-bodies               : 4 9 10
-body                 : 5
-func                 : 2
-funcs                : 1 2
-params               : 4 6 7 10
+bodies               : 11 16 17 18 19 20
+body                 : 6 12
+decl                 : 4 17
+func                 : 3 19
+ifstmt               : 5 18
+params               : 11 13 14 20
+predicate            : 6
 program              : 0
+stmt                 : 2
+stmts                : 1 2
 
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . stmts
+    (2) stmts -> . stmt stmts
+    (10) stmts -> .
+    (3) stmt -> . func
+    (4) stmt -> . decl
+    (5) stmt -> . ifstmt
+    (11) func -> . FUNC IDENT OP params CP OB bodies CB
+    (9) decl -> . VAR IDENT ASSIGN IDENT
+    (6) ifstmt -> . IF OP predicate CP OB body CB
+
+    $end            reduce using rule 10 (stmts -> .)
+    FUNC            shift and go to state 7
+    VAR             shift and go to state 8
+    IF              shift and go to state 9
+
+    program                        shift and go to state 1
+    stmts                          shift and go to state 2
+    stmt                           shift and go to state 3
+    func                           shift and go to state 4
+    decl                           shift and go to state 5
+    ifstmt                         shift and go to state 6
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> stmts .
+
+    $end            reduce using rule 1 (program -> stmts .)
+
+
+state 3
+
+    (2) stmts -> stmt . stmts
+    (2) stmts -> . stmt stmts
+    (10) stmts -> .
+    (3) stmt -> . func
+    (4) stmt -> . decl
+    (5) stmt -> . ifstmt
+    (11) func -> . FUNC IDENT OP params CP OB bodies CB
+    (9) decl -> . VAR IDENT ASSIGN IDENT
+    (6) ifstmt -> . IF OP predicate CP OB body CB
+
+    $end            reduce using rule 10 (stmts -> .)
+    FUNC            shift and go to state 7
+    VAR             shift and go to state 8
+    IF              shift and go to state 9
+
+    stmt                           shift and go to state 3
+    stmts                          shift and go to state 10
+    func                           shift and go to state 4
+    decl                           shift and go to state 5
+    ifstmt                         shift and go to state 6
+
+state 4
+
+    (3) stmt -> func .
+
+    FUNC            reduce using rule 3 (stmt -> func .)
+    VAR             reduce using rule 3 (stmt -> func .)
+    IF              reduce using rule 3 (stmt -> func .)
+    $end            reduce using rule 3 (stmt -> func .)
+
+
+state 5
+
+    (4) stmt -> decl .
+
+    FUNC            reduce using rule 4 (stmt -> decl .)
+    VAR             reduce using rule 4 (stmt -> decl .)
+    IF              reduce using rule 4 (stmt -> decl .)
+    $end            reduce using rule 4 (stmt -> decl .)
+
+
+state 6
+
+    (5) stmt -> ifstmt .
+
+    FUNC            reduce using rule 5 (stmt -> ifstmt .)
+    VAR             reduce using rule 5 (stmt -> ifstmt .)
+    IF              reduce using rule 5 (stmt -> ifstmt .)
+    $end            reduce using rule 5 (stmt -> ifstmt .)
+
+
+state 7
+
+    (11) func -> FUNC . IDENT OP params CP OB bodies CB
+
+    IDENT           shift and go to state 11
+
+
+state 8
+
+    (9) decl -> VAR . IDENT ASSIGN IDENT
+
+    IDENT           shift and go to state 12
+
+
+state 9
+
+    (6) ifstmt -> IF . OP predicate CP OB body CB
+
+    OP              shift and go to state 13
+
+
+state 10
+
+    (2) stmts -> stmt stmts .
+
+    $end            reduce using rule 2 (stmts -> stmt stmts .)
+
+
+state 11
+
+    (11) func -> FUNC IDENT . OP params CP OB bodies CB
+
+    OP              shift and go to state 14
+
+
+state 12
+
+    (9) decl -> VAR IDENT . ASSIGN IDENT
+
+    ASSIGN          shift and go to state 15
+
+
+state 13
+
+    (6) ifstmt -> IF OP . predicate CP OB body CB
+    (7) predicate -> . IDENT
+    (8) predicate -> .
+
+    IDENT           shift and go to state 17
+    CP              reduce using rule 8 (predicate -> .)
+
+    predicate                      shift and go to state 16
+
+state 14
+
+    (11) func -> FUNC IDENT OP . params CP OB bodies CB
+    (13) params -> . IDENT params
+    (14) params -> . IDENT COMMA params
+    (15) params -> .
+
+    IDENT           shift and go to state 18
+    CP              reduce using rule 15 (params -> .)
+
+    params                         shift and go to state 19
+
+state 15
+
+    (9) decl -> VAR IDENT ASSIGN . IDENT
+
+    IDENT           shift and go to state 20
+
+
+state 16
+
+    (6) ifstmt -> IF OP predicate . CP OB body CB
+
+    CP              shift and go to state 21
+
+
+state 17
+
+    (7) predicate -> IDENT .
+
+    CP              reduce using rule 7 (predicate -> IDENT .)
+
+
+state 18
+
+    (13) params -> IDENT . params
+    (14) params -> IDENT . COMMA params
+    (13) params -> . IDENT params
+    (14) params -> . IDENT COMMA params
+    (15) params -> .
+
+    COMMA           shift and go to state 23
+    IDENT           shift and go to state 18
+    CP              reduce using rule 15 (params -> .)
+
+    params                         shift and go to state 22
+
+state 19
+
+    (11) func -> FUNC IDENT OP params . CP OB bodies CB
+
+    CP              shift and go to state 24
+
+
+state 20
+
+    (9) decl -> VAR IDENT ASSIGN IDENT .
+
+    FUNC            reduce using rule 9 (decl -> VAR IDENT ASSIGN IDENT .)
+    VAR             reduce using rule 9 (decl -> VAR IDENT ASSIGN IDENT .)
+    IF              reduce using rule 9 (decl -> VAR IDENT ASSIGN IDENT .)
+    $end            reduce using rule 9 (decl -> VAR IDENT ASSIGN IDENT .)
+    IDENT           reduce using rule 9 (decl -> VAR IDENT ASSIGN IDENT .)
+    CB              reduce using rule 9 (decl -> VAR IDENT ASSIGN IDENT .)
+
+
+state 21
+
+    (6) ifstmt -> IF OP predicate CP . OB body CB
+
+    OB              shift and go to state 25
+
+
+state 22
+
+    (13) params -> IDENT params .
+
+    CP              reduce using rule 13 (params -> IDENT params .)
+
+
+state 23
+
+    (14) params -> IDENT COMMA . params
+    (13) params -> . IDENT params
+    (14) params -> . IDENT COMMA params
+    (15) params -> .
+
+    IDENT           shift and go to state 18
+    CP              reduce using rule 15 (params -> .)
+
+    params                         shift and go to state 26
+
+state 24
+
+    (11) func -> FUNC IDENT OP params CP . OB bodies CB
+
+    OB              shift and go to state 27
+
+
+state 25
+
+    (6) ifstmt -> IF OP predicate CP OB . body CB
+    (16) body -> . IDENT OP CP bodies
+    (17) body -> . decl bodies
+    (18) body -> . ifstmt bodies
+    (19) body -> . func bodies
+    (20) body -> . IDENT OP params CP bodies
+    (21) body -> .
+    (9) decl -> . VAR IDENT ASSIGN IDENT
+    (6) ifstmt -> . IF OP predicate CP OB body CB
+    (11) func -> . FUNC IDENT OP params CP OB bodies CB
+
+    IDENT           shift and go to state 29
+    CB              reduce using rule 21 (body -> .)
+    VAR             shift and go to state 8
+    IF              shift and go to state 9
+    FUNC            shift and go to state 7
+
+    body                           shift and go to state 28
+    decl                           shift and go to state 30
+    ifstmt                         shift and go to state 31
+    func                           shift and go to state 32
+
+state 26
+
+    (14) params -> IDENT COMMA params .
+
+    CP              reduce using rule 14 (params -> IDENT COMMA params .)
+
+
+state 27
+
+    (11) func -> FUNC IDENT OP params CP OB . bodies CB
+    (12) bodies -> . body
+    (16) body -> . IDENT OP CP bodies
+    (17) body -> . decl bodies
+    (18) body -> . ifstmt bodies
+    (19) body -> . func bodies
+    (20) body -> . IDENT OP params CP bodies
+    (21) body -> .
+    (9) decl -> . VAR IDENT ASSIGN IDENT
+    (6) ifstmt -> . IF OP predicate CP OB body CB
+    (11) func -> . FUNC IDENT OP params CP OB bodies CB
+
+    IDENT           shift and go to state 29
+    CB              reduce using rule 21 (body -> .)
+    VAR             shift and go to state 8
+    IF              shift and go to state 9
+    FUNC            shift and go to state 7
+
+    bodies                         shift and go to state 33
+    body                           shift and go to state 34
+    decl                           shift and go to state 30
+    ifstmt                         shift and go to state 31
+    func                           shift and go to state 32
+
+state 28
+
+    (6) ifstmt -> IF OP predicate CP OB body . CB
+
+    CB              shift and go to state 35
+
+
+state 29
+
+    (16) body -> IDENT . OP CP bodies
+    (20) body -> IDENT . OP params CP bodies
+
+    OP              shift and go to state 36
+
+
+state 30
+
+    (17) body -> decl . bodies
+    (12) bodies -> . body
+    (16) body -> . IDENT OP CP bodies
+    (17) body -> . decl bodies
+    (18) body -> . ifstmt bodies
+    (19) body -> . func bodies
+    (20) body -> . IDENT OP params CP bodies
+    (21) body -> .
+    (9) decl -> . VAR IDENT ASSIGN IDENT
+    (6) ifstmt -> . IF OP predicate CP OB body CB
+    (11) func -> . FUNC IDENT OP params CP OB bodies CB
+
+    IDENT           shift and go to state 29
+    CB              reduce using rule 21 (body -> .)
+    VAR             shift and go to state 8
+    IF              shift and go to state 9
+    FUNC            shift and go to state 7
+
+    decl                           shift and go to state 30
+    bodies                         shift and go to state 37
+    body                           shift and go to state 34
+    ifstmt                         shift and go to state 31
+    func                           shift and go to state 32
+
+state 31
+
+    (18) body -> ifstmt . bodies
+    (12) bodies -> . body
+    (16) body -> . IDENT OP CP bodies
+    (17) body -> . decl bodies
+    (18) body -> . ifstmt bodies
+    (19) body -> . func bodies
+    (20) body -> . IDENT OP params CP bodies
+    (21) body -> .
+    (9) decl -> . VAR IDENT ASSIGN IDENT
+    (6) ifstmt -> . IF OP predicate CP OB body CB
+    (11) func -> . FUNC IDENT OP params CP OB bodies CB
+
+    IDENT           shift and go to state 29
+    CB              reduce using rule 21 (body -> .)
+    VAR             shift and go to state 8
+    IF              shift and go to state 9
+    FUNC            shift and go to state 7
+
+    ifstmt                         shift and go to state 31
+    bodies                         shift and go to state 38
+    body                           shift and go to state 34
+    decl                           shift and go to state 30
+    func                           shift and go to state 32
+
+state 32
+
+    (19) body -> func . bodies
+    (12) bodies -> . body
+    (16) body -> . IDENT OP CP bodies
+    (17) body -> . decl bodies
+    (18) body -> . ifstmt bodies
+    (19) body -> . func bodies
+    (20) body -> . IDENT OP params CP bodies
+    (21) body -> .
+    (9) decl -> . VAR IDENT ASSIGN IDENT
+    (6) ifstmt -> . IF OP predicate CP OB body CB
+    (11) func -> . FUNC IDENT OP params CP OB bodies CB
+
+    IDENT           shift and go to state 29
+    CB              reduce using rule 21 (body -> .)
+    VAR             shift and go to state 8
+    IF              shift and go to state 9
+    FUNC            shift and go to state 7
+
+    func                           shift and go to state 32
+    bodies                         shift and go to state 39
+    body                           shift and go to state 34
+    decl                           shift and go to state 30
+    ifstmt                         shift and go to state 31
+
+state 33
+
+    (11) func -> FUNC IDENT OP params CP OB bodies . CB
+
+    CB              shift and go to state 40
+
+
+state 34
+
+    (12) bodies -> body .
+
+    CB              reduce using rule 12 (bodies -> body .)
+
+
+state 35
+
+    (6) ifstmt -> IF OP predicate CP OB body CB .
+
+    FUNC            reduce using rule 6 (ifstmt -> IF OP predicate CP OB body CB .)
+    VAR             reduce using rule 6 (ifstmt -> IF OP predicate CP OB body CB .)
+    IF              reduce using rule 6 (ifstmt -> IF OP predicate CP OB body CB .)
+    $end            reduce using rule 6 (ifstmt -> IF OP predicate CP OB body CB .)
+    IDENT           reduce using rule 6 (ifstmt -> IF OP predicate CP OB body CB .)
+    CB              reduce using rule 6 (ifstmt -> IF OP predicate CP OB body CB .)
+
+
+state 36
+
+    (16) body -> IDENT OP . CP bodies
+    (20) body -> IDENT OP . params CP bodies
+    (13) params -> . IDENT params
+    (14) params -> . IDENT COMMA params
+    (15) params -> .
+
+  ! shift/reduce conflict for CP resolved as shift
+    CP              shift and go to state 41
+    IDENT           shift and go to state 18
+
+  ! CP              [ reduce using rule 15 (params -> .) ]
+
+    params                         shift and go to state 42
+
+state 37
+
+    (17) body -> decl bodies .
+
+    CB              reduce using rule 17 (body -> decl bodies .)
+
+
+state 38
+
+    (18) body -> ifstmt bodies .
+
+    CB              reduce using rule 18 (body -> ifstmt bodies .)
+
+
+state 39
+
+    (19) body -> func bodies .
+
+    CB              reduce using rule 19 (body -> func bodies .)
+
+
+state 40
+
+    (11) func -> FUNC IDENT OP params CP OB bodies CB .
+
+    FUNC            reduce using rule 11 (func -> FUNC IDENT OP params CP OB bodies CB .)
+    VAR             reduce using rule 11 (func -> FUNC IDENT OP params CP OB bodies CB .)
+    IF              reduce using rule 11 (func -> FUNC IDENT OP params CP OB bodies CB .)
+    $end            reduce using rule 11 (func -> FUNC IDENT OP params CP OB bodies CB .)
+    IDENT           reduce using rule 11 (func -> FUNC IDENT OP params CP OB bodies CB .)
+    CB              reduce using rule 11 (func -> FUNC IDENT OP params CP OB bodies CB .)
+
+
+state 41
+
+    (16) body -> IDENT OP CP . bodies
+    (12) bodies -> . body
+    (16) body -> . IDENT OP CP bodies
+    (17) body -> . decl bodies
+    (18) body -> . ifstmt bodies
+    (19) body -> . func bodies
+    (20) body -> . IDENT OP params CP bodies
+    (21) body -> .
+    (9) decl -> . VAR IDENT ASSIGN IDENT
+    (6) ifstmt -> . IF OP predicate CP OB body CB
+    (11) func -> . FUNC IDENT OP params CP OB bodies CB
+
+    IDENT           shift and go to state 29
+    CB              reduce using rule 21 (body -> .)
+    VAR             shift and go to state 8
+    IF              shift and go to state 9
+    FUNC            shift and go to state 7
+
+    bodies                         shift and go to state 43
+    body                           shift and go to state 34
+    decl                           shift and go to state 30
+    ifstmt                         shift and go to state 31
+    func                           shift and go to state 32
+
+state 42
+
+    (20) body -> IDENT OP params . CP bodies
+
+    CP              shift and go to state 44
+
+
+state 43
+
+    (16) body -> IDENT OP CP bodies .
+
+    CB              reduce using rule 16 (body -> IDENT OP CP bodies .)
+
+
+state 44
+
+    (20) body -> IDENT OP params CP . bodies
+    (12) bodies -> . body
+    (16) body -> . IDENT OP CP bodies
+    (17) body -> . decl bodies
+    (18) body -> . ifstmt bodies
+    (19) body -> . func bodies
+    (20) body -> . IDENT OP params CP bodies
+    (21) body -> .
+    (9) decl -> . VAR IDENT ASSIGN IDENT
+    (6) ifstmt -> . IF OP predicate CP OB body CB
+    (11) func -> . FUNC IDENT OP params CP OB bodies CB
+
+    IDENT           shift and go to state 29
+    CB              reduce using rule 21 (body -> .)
+    VAR             shift and go to state 8
+    IF              shift and go to state 9
+    FUNC            shift and go to state 7
+
+    bodies                         shift and go to state 45
+    body                           shift and go to state 34
+    decl                           shift and go to state 30
+    ifstmt                         shift and go to state 31
+    func                           shift and go to state 32
+
+state 45
+
+    (20) body -> IDENT OP params CP bodies .
+
+    CB              reduce using rule 20 (body -> IDENT OP params CP bodies .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for CP in state 36 resolved as shift
